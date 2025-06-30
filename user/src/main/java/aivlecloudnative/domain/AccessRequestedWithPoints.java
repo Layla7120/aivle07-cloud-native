@@ -1,20 +1,21 @@
 package aivlecloudnative.domain;
 
-import aivlecloudnative.domain.*;
 import aivlecloudnative.infra.AbstractEvent;
-import java.time.LocalDate;
-import java.util.*;
 import lombok.*;
 
 //<<< DDD / Domain Event
+@EqualsAndHashCode(callSuper = false)
 @Data
 @ToString
 public class AccessRequestedWithPoints extends AbstractEvent {
 
-    private Long id;
+    private Long userId;
+    private Long bookId;
 
-    public AccessRequestedWithPoints(User aggregate) {
-        super(aggregate);
+    public AccessRequestedWithPoints(User user, Long bookId) {
+        super(user);
+        this.userId = user.getId();
+        this.bookId = bookId;
     }
 
     public AccessRequestedWithPoints() {

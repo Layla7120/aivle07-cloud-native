@@ -1,7 +1,6 @@
 package aivlecloudnative.infra;
 
 import aivlecloudnative.UserApplication;
-import aivlecloudnative.config.kafka.KafkaProcessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.BeanUtils;
@@ -26,38 +25,6 @@ public class AbstractEvent {
     public AbstractEvent() {
         this.setEventType(this.getClass().getSimpleName());
         this.timestamp = System.currentTimeMillis();
-    }
-
-    public void publish() {
-        /**
-         * spring streams 방식
-         */
-        KafkaProcessor processor = UserApplication.applicationContext.getBean(
-            KafkaProcessor.class
-        );
-        MessageChannel outputChannel = processor.outboundTopic();
-
-        outputChannel.send(
-            MessageBuilder
-                .withPayload(this)
-                .setHeader(
-                    MessageHeaders.CONTENT_TYPE,
-                    MimeTypeUtils.APPLICATION_JSON
-                )
-                .setHeader("type", getEventType())
-                .build()
-        );
-    }
-
-    public void publishAfterCommit() {
-        TransactionSynchronizationManager.registerSynchronization(
-            new TransactionSynchronizationAdapter() {
-                @Override
-                public void afterCompletion(int status) {
-                    AbstractEvent.this.publish();
-                }
-            }
-        );
     }
 
     public String getEventType() {

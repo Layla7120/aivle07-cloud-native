@@ -1,42 +1,20 @@
 package aivlecloudnative.infra;
 
-import aivlecloudnative.config.kafka.KafkaProcessor;
-import aivlecloudnative.domain.*;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.naming.NameParser;
-import javax.naming.NameParser;
-import javax.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.stream.annotation.StreamListener;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.stereotype.Service;
+import aivlecloudnative.domain.User;
+import aivlecloudnative.domain.BookViewed;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-//<<< Clean Arch / Inbound Adaptor
-@Service
-@Transactional
+import java.util.function.Consumer;
+
+@Configuration
 public class PolicyHandler {
 
-    @Autowired
-    UserRepository userRepository;
-
-    @StreamListener(KafkaProcessor.INPUT)
-    public void whatever(@Payload String eventString) {}
-
-    @StreamListener(
-        value = KafkaProcessor.INPUT,
-        condition = "headers['type']=='BookViewed'"
-    )
-    public void wheneverBookViewed_UpdateBookRead(
-        @Payload BookViewed bookViewed
-    ) {
-        BookViewed event = bookViewed;
-        System.out.println(
-            "\n\n##### listener UpdateBookRead : " + bookViewed + "\n\n"
-        );
-
-        // Sample Logic //
-        User.updateBookRead(event);
+    @Bean
+    public Consumer<BookViewed> updateBookRead() {
+        return bookViewed -> {
+            System.out.println("##### listener UpdateBookRead : " + bookViewed);
+            User.updateBookRead(bookViewed);
+        };
     }
 }
-//>>> Clean Arch / Inbound Adaptor

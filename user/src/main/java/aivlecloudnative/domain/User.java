@@ -1,8 +1,14 @@
 package aivlecloudnative.domain;
 
 import aivlecloudnative.UserApplication;
+import jakarta.persistence.ElementCollection;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -26,7 +32,7 @@ public class User {
     private Long subscriptionDueDate;
 
     @ElementCollection
-    private List<Integer> myBookHistory;
+    private List<Long> myBookHistory;
 
     private Boolean isKt;
 
@@ -41,37 +47,19 @@ public class User {
         this.userName = signUpCommand.getUserName();
         this.email = signUpCommand.getEmail();
         this.isKt = signUpCommand.getIsKt();
-
-        SubscriberSignedUp subscriberSignedUp = new SubscriberSignedUp(this);
-        subscriberSignedUp.publishAfterCommit();
     }
 
     //>>> Clean Arch / Port Method
+
     //<<< Clean Arch / Port Method
-    public void requestSubscription(
-        RequestSubscriptionCommand requestSubscriptionCommand
-    ) {
-        //implement business logic here:
+    public void addBookToHistory(Long bookId) {
+        if (this.myBookHistory == null) {
+            this.myBookHistory = new ArrayList<>();
+        }
 
-        SubscriberSignedUp subscriberSignedUp = new SubscriberSignedUp(this);
-        subscriberSignedUp.publishAfterCommit();
-    }
-
-    //>>> Clean Arch / Port Method
-    //<<< Clean Arch / Port Method
-    public void requestContentAccess(
-        RequestContentAccessCommand requestContentAccessCommand
-    ) {
-        //implement business logic here:
-
-        AccessRequestedAsSubscriber accessRequestedAsSubscriber = new AccessRequestedAsSubscriber(
-            this
-        );
-        accessRequestedAsSubscriber.publishAfterCommit();
-        AccessRequestedWithPoints accessRequestedWithPoints = new AccessRequestedWithPoints(
-            this
-        );
-        accessRequestedWithPoints.publishAfterCommit();
+        if (!this.myBookHistory.contains(bookId)) {
+            this.myBookHistory.add(bookId);
+        }
     }
 
     //>>> Clean Arch / Port Method

@@ -40,7 +40,7 @@ class UserControllerTest {
         SignUpCommand command = new SignUpCommand();
         command.setUserName("홍길동");
         command.setEmail("test@example.com");
-        command.setIsKt(true); // 반드시 있어야 함
+        command.setIsKt(true);
 
         mockMvc.perform(post("/users/signup")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -72,7 +72,7 @@ class UserControllerTest {
     @DisplayName("구독 요청 성공 시 200 응답")
     void requestSubscription_should_return200_when_valid() throws Exception {
         RequestSubscriptionCommand command = new RequestSubscriptionCommand();
-        command.setUser_id(1L);
+        command.setUserId(1L);
 
         User dummy = new User();
         dummy.setHasActiveSubscription(true);
@@ -80,7 +80,7 @@ class UserControllerTest {
         Mockito.when(userService.requestSubscription(any()))
                 .thenReturn(dummy);
 
-        mockMvc.perform(post("/users/requestsubscription")
+        mockMvc.perform(post("/users/request-subscription")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(command)))
                 .andExpect(status().isOk());
@@ -93,7 +93,7 @@ class UserControllerTest {
     void requestSubscription_should_return400_when_userId_missing() throws Exception {
         RequestSubscriptionCommand command = new RequestSubscriptionCommand();
 
-        mockMvc.perform(post("/users/requestsubscription")
+        mockMvc.perform(post("/users/request-subscription")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(command)))
                 .andExpect(status().isBadRequest());

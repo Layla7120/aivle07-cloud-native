@@ -4,10 +4,13 @@ server:
 spring:
   application:
     name: user
+
 ---
 
 spring:
-  profiles: default
+  config:
+    activate:
+      on-profile: default
   jpa:
     properties:
       hibernate:
@@ -16,6 +19,14 @@ spring:
         implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
   cloud:
     stream:
+      bindings:
+        event-in:
+          destination: aivlecloudnative
+          group: user
+          contentType: application/json
+        event-out:
+          destination: aivlecloudnative
+          contentType: application/json
       kafka:
         binder:
           brokers: localhost:9092
@@ -27,24 +38,12 @@ spring:
                   serde: org.apache.kafka.common.serialization.Serdes$StringSerde
                 value:
                   serde: org.apache.kafka.common.serialization.Serdes$StringSerde
-      bindings:
-        event-in:
-          group: user
-#<<< EDA / Topic Name
-          destination: aivlecloudnative
-#>>> EDA / Topic Name
-          contentType: application/json
-        event-out:
-#<<< EDA / Topic Name
-          destination: aivlecloudnative
-#>>> EDA / Topic Name
-          contentType: application/json
 
 logging:
   level:
     org.hibernate.type: trace
     org.springframework.cloud: debug
-
+    aivlecloudnative.infra.OutboxPublisher: info
 
 server:
   port: 8082
@@ -52,7 +51,9 @@ server:
 ---
 
 spring:
-  profiles: docker
+  config:
+    activate:
+      on-profile: docker
   jpa:
     properties:
       hibernate:
@@ -61,6 +62,14 @@ spring:
         implicit_naming_strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyComponentPathImpl
   cloud:
     stream:
+      bindings:
+        event-in:
+          destination: aivlecloudnative
+          group: user
+          contentType: application/json
+        event-out:
+          destination: aivlecloudnative
+          contentType: application/json
       kafka:
         binder:
           brokers: my-kafka:9092
@@ -72,13 +81,3 @@ spring:
                   serde: org.apache.kafka.common.serialization.Serdes$StringSerde
                 value:
                   serde: org.apache.kafka.common.serialization.Serdes$StringSerde
-      bindings:
-        event-in:
-          group: user
-          destination: aivlecloudnative
-          contentType: application/json
-        event-out:
-          destination: aivlecloudnative
-          contentType: application/json
-
-

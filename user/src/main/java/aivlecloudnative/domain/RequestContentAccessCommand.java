@@ -1,11 +1,14 @@
 package aivlecloudnative.domain;
 
-import java.time.LocalDate;
-import java.util.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 @Data
 public class RequestContentAccessCommand {
 
-    private Integer userId;
+    @NotNull(message = "아이디를 입력해주세요")
+    private Long userId;
+
+    @NotNull(message = "책 아이디를 입력해주세요")
+    private Long bookId;
 }
